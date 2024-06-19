@@ -64,4 +64,35 @@ class SleepLogServiceTest {
         assertEquals("A sleep log for the user on this date already exists.", exception.message)
         verify(sleepLogRepository, times(1)).save(any(SleepLog::class.java))
     }
+
+    @Test
+    fun `getLastNightSleep should return sleep log for last night`() {
+        val userId: Long = 1
+        val sleepLog = SleepLog(
+            userId = userId,
+            date = LocalDate.now().minusDays(1),
+            timeInBedStart = LocalTime.of(22, 30),
+            timeInBedEnd = LocalTime.of(6, 30),
+            totalTimeInBed = 28800L, // 8 hours in seconds
+            morningFeeling = MorningFeeling.GOOD
+        )
+
+        `when`(sleepLogRepository.findByUserIdAndDate(userId, LocalDate.now().minusDays(1))).thenReturn(sleepLog)
+
+        val result = sleepLogService.getLastNightSleep(userId)
+        assertNotNull(result)
+        assertEquals(sleepLog, result)
+        verify(sleepLogRepository, times(1)).findByUserIdAndDate(userId, LocalDate.now().minusDays(1))
+    }
+
+    @Test
+    fun `getLastNightSleep should return null if no sleep log found for last night`() {
+        val userId: Long = 1
+
+        `when`(sleepLogRepository.findByUserIdAndDate(userId, LocalDate.now().minusDays(1))).thenReturn(null)
+
+        val result = sleepLogService.getLastNightSleep(userId)
+        assertNull(result)
+        verify(sleepLogRepository, times(1)).findByUserIdAndDate(userId, LocalDate.now().minusDays(1))
+    }
 }
