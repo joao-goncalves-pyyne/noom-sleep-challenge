@@ -1,6 +1,7 @@
 package com.noom.interview.fullstack.sleep.services
 
 import com.noom.interview.fullstack.sleep.entities.SleepLog
+import com.noom.interview.fullstack.sleep.enums.MorningFeeling
 import com.noom.interview.fullstack.sleep.repositories.SleepLogRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +32,7 @@ class SleepLogServiceTest {
             date = LocalDate.of(2023, 6, 18),
             timeInBedStart = LocalTime.of(22, 30),
             timeInBedEnd = LocalTime.of(6, 30),
-            morningFeeling = "GOOD"
+            morningFeeling = MorningFeeling.GOOD
         )
 
         val savedSleepLog = sleepLog.copy(totalTimeInBed = 28800L) // 8 hours in seconds
@@ -51,7 +52,7 @@ class SleepLogServiceTest {
             date = LocalDate.of(2023, 6, 18),
             timeInBedStart = LocalTime.of(22, 30),
             timeInBedEnd = LocalTime.of(6, 30),
-            morningFeeling = "GOOD"
+            morningFeeling = MorningFeeling.GOOD
         )
 
         `when`(sleepLogRepository.save(any(SleepLog::class.java))).thenThrow(DataIntegrityViolationException::class.java)
