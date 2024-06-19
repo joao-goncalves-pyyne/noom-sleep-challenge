@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "d1b3113f-fc52-419c-8e76-e46ff7b1290f",
+		"name": "Noom-sleep-challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36253174",
+		"_collection_link": "https://www.postman.com/onlinecook/workspace/noom-sleep-challenge/collection/36253174-d1b3113f-fc52-419c-8e76-e46ff7b1290f?action=share&source=collection_link&creator=36253174"
+	},
+	"item": [
+		{
+			"name": "Post Sleep Log",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userId\": 123,\r\n  \"date\": \"2024-06-13\",\r\n  \"timeInBedStart\": \"21:30:00\",\r\n  \"timeInBedEnd\": \"01:30:00\",\r\n  \"morningFeeling\": \"BAD\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/sleep",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sleep"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
