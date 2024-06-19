@@ -24,6 +24,9 @@ class SleepLogService(private val repository: SleepLogRepository) {
         }
     }
 
+    fun getLastNightSleep(userId: Long): SleepLog? =
+        repository.findByUserIdAndDate(userId, LocalDate.now().minusDays(1))
+
     private fun calculateDuration(date: LocalDate, start: LocalTime, end: LocalTime): Duration {
         val startDateTime = LocalDateTime.of(date, start)
         val endDateTime = if (end.isAfter(start) || end == start) {

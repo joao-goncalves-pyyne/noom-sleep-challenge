@@ -13,4 +13,9 @@ class SleepLogController(private val sleepLogService: SleepLogService) {
     fun logSleep(@RequestBody sleepLog: SleepLog): ResponseEntity<SleepLog> {
         return ResponseEntity.ok(sleepLogService.logSleep(sleepLog))
     }
+
+    @GetMapping("/last-night")
+    fun getLastNightSleep(@RequestParam userId: Long): ResponseEntity<SleepLog?> {
+        return ResponseEntity.ok(sleepLogService.getLastNightSleep(userId))
+    }
 }
