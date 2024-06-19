@@ -34,6 +34,32 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Last Night",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/sleep/last-night?userId=123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sleep",
+						"last-night"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "123"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
