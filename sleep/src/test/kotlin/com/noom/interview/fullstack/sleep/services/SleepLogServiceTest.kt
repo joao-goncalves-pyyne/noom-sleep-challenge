@@ -95,4 +95,40 @@ class SleepLogServiceTest {
         assertNull(result)
         verify(sleepLogRepository, times(1)).findByUserIdAndDate(userId, LocalDate.now().minusDays(1))
     }
+
+
+    @Test
+    fun `get30DayAverages should return average sleep stats for last 30 days`() {
+        val userId: Long = 1
+        val sleepLogs = listOf(
+            SleepLog(
+                userId = userId,
+                date = LocalDate.now().minusDays(1),
+                timeInBedStart = LocalTime.of(22, 30),
+                timeInBedEnd = LocalTime.of(3, 30),
+                totalTimeInBed = 18000L, // 5 hours in seconds
+                morningFeeling = MorningFeeling.BAD
+            ),
+            SleepLog(
+                userId = userId,
+                date = LocalDate.now().minusDays(2),
+                timeInBedStart = LocalTime.of(23, 0),
+                timeInBedEnd = LocalTime.of(7, 0),
+                totalTimeInBed = 28800L, // 8 hours in seconds
+                morningFeeling = MorningFeeling.OK
+            )
+        )
+
+        `when`(sleepLogRepository.findLast30DaysLogs(userId, LocalDate.now().minusDays(30))).thenReturn(sleepLogs)
+
+        val result = sleepLogService.get30DayAverages(userId)
+        assertNotNull(result)
+        assertEquals(LocalDate.now().minusDays(30), result.startDate)
+        assertEquals(LocalDate.now(), result.endDate)
+        assertEquals(23400L, result.averageTotalTimeInBed) // Average of 18000 and 28800
+        assertEquals(LocalTime.of(22, 45), result.averageTimeInBedStart) // Average time
+        assertEquals(LocalTime.of(5, 15), result.averageTimeInBedEnd) // Average time
+        assertEquals(mapOf("BAD" to 1, "OK" to 1), result.morningFeelingFrequencies)
+        verify(sleepLogRepository, times(1)).findLast30DaysLogs(userId, LocalDate.now().minusDays(30))
+    }
 }

@@ -1,5 +1,6 @@
 package com.noom.interview.fullstack.sleep.services
 
+import com.noom.interview.fullstack.sleep.dtos.AverageSleepStats
 import com.noom.interview.fullstack.sleep.entities.SleepLog
 import com.noom.interview.fullstack.sleep.repositories.SleepLogRepository
 import org.springframework.dao.DataIntegrityViolationException
@@ -26,6 +27,34 @@ class SleepLogService(private val repository: SleepLogRepository) {
 
     fun getLastNightSleep(userId: Long): SleepLog? =
         repository.findByUserIdAndDate(userId, LocalDate.now().minusDays(1))
+
+    fun get30DayAverages(userId: Long): AverageSleepStats {
+        val endDate = LocalDate.now()
+        val startDate = endDate.minusDays(30)
+        val sleepLogs = repository.findLast30DaysLogs(userId, startDate)
+
+        val averageTotalTimeInBed = sleepLogs.map { it.totalTimeInBed }.average().toLong()
+        val averageTimeInBedStart = calculateAverageTime(sleepLogs.map { it.timeInBedStart })
+        val averageTimeInBedEnd = calculateAverageTime(sleepLogs.map { it.timeInBedEnd })
+
+        val morningFeelingFrequencies = sleepLogs.groupingBy { it.morningFeeling.name }.eachCount()
+
+        return AverageSleepStats(
+            startDate = startDate,
+            endDate = endDate,
+            averageTotalTimeInBed = averageTotalTimeInBed,
+            averageTimeInBedStart = averageTimeInBedStart,
+            averageTimeInBedEnd = averageTimeInBedEnd,
+            morningFeelingFrequencies = morningFeelingFrequencies
+        )
+    }
+
+    private fun calculateAverageTime(times: List<LocalTime>): LocalTime {
+        if (times.isEmpty()) return LocalTime.MIDNIGHT
+
+        val totalSeconds = times.map { it.toSecondOfDay() }.average().toLong()
+        return LocalTime.ofSecondOfDay(totalSeconds % (24 * 60 * 60))
+    }
 
     private fun calculateDuration(date: LocalDate, start: LocalTime, end: LocalTime): Duration {
         val startDateTime = LocalDateTime.of(date, start)
